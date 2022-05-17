@@ -22,6 +22,11 @@ type IOHandler interface {
 	Fetch(ns, file string) (bytes []byte, mime *string, err error)
 	// writes file
 	Upload(ns, file string, bytes []byte) error
+
+	// deletes file
+	Delete(ns, file string) error
+	// deletes namespace(dir)
+	DeleteNS(ns string) error
 }
 
 type File struct {

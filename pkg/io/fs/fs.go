@@ -101,3 +101,29 @@ func (f *FSHandler) Upload(ns, file string, data []byte) error {
 	}
 	return nil
 }
+
+func (f *FSHandler) Delete(ns, file string) error {
+	log := f.log.Named("Delete")
+
+	p := path.Join(f.root, ns, file)
+
+	err := os.Remove(p)
+	if err != nil {
+		log.Error("failed to delete file", zap.Error(err))
+		return err
+	}
+	return nil
+}
+
+func (f *FSHandler) DeleteNS(ns string) error {
+	log := f.log.Named("DeleteNS")
+
+	p := path.Join(f.root, ns)
+
+	err := os.RemoveAll(p)
+	if err != nil {
+		log.Error("failed to delete namespace", zap.Error(err))
+		return err
+	}
+	return nil
+}

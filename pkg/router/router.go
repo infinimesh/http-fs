@@ -36,8 +36,11 @@ func NewRouter(h io.IOHandler) *mux.Router {
 	r := mux.NewRouter()
 	
 	r.HandleFunc("/{ns}", Stat(h)).Methods("GET")
+	r.HandleFunc("/{ns}", Delete(h)).Methods("DELETE")
+
 	r.HandleFunc("/{ns}/{file}", Fetch(h)).Methods("GET")
 	r.HandleFunc("/{ns}/{file}", Upload(h)).Methods("POST")
+	r.HandleFunc("/{ns}/{file}", Delete(h)).Methods("DELETE")
 
 	r.Use(mux.CORSMethodMiddleware(r))
 
@@ -103,5 +106,24 @@ func Upload(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 		}
 
 		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func Delete(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ns := mux.Vars(r)["ns"]
+		file, ok := mux.Vars(r)["file"]
+
+		var err error
+		if ok {
+			err = h.Delete(ns, file)
+		} else {
+			err = h.DeleteNS(ns)
+		}
+
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 	}
 }
