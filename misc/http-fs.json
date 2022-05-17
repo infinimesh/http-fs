@@ -1,0 +1,186 @@
+{
+	"info": {
+		"name": "infinimesh HTTP-FS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Stat NS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/:ns",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						":ns"
+					],
+					"variable": [
+						{
+							"key": "ns",
+							"value": "test"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch File",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/:ns/:file",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						":ns",
+						":file"
+					],
+					"variable": [
+						{
+							"key": "ns",
+							"value": "test"
+						},
+						{
+							"key": "file",
+							"value": "test.html"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete File",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/:ns/:file",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						":ns",
+						":file"
+					],
+					"variable": [
+						{
+							"key": "ns",
+							"value": "test"
+						},
+						{
+							"key": "file",
+							"value": "test.html"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete NS",
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/:ns",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						":ns"
+					],
+					"variable": [
+						{
+							"key": "ns",
+							"value": "test"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload File",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/:ns/:file",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						":ns",
+						":file"
+					],
+					"variable": [
+						{
+							"key": "ns",
+							"value": "infinimesh"
+						},
+						{
+							"key": "file",
+							"value": "test.html"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

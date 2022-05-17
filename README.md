@@ -21,7 +21,7 @@ GET /{ns}/{file} - returns file itself
 POST /{ns}/{file} - uploads file
 DELETE /{ns}/{file} - deletes file
 
-See the Postman Collection to try it yourself.
+See the [Postman Collection](https://github.com/infinimesh/http-fs/blob/master/misc/http-fs.json) to try it yourself.
 
 ## Installation
 
