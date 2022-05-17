@@ -30,7 +30,8 @@ import (
 )
 
 var (
-	log *zap.Logger
+	log  *zap.Logger
+	addr string
 )
 
 func init() {
@@ -43,6 +44,8 @@ func init() {
 		atom,
 	))
 
+	viper.AutomaticEnv()
+
 	flag.Int("log-level", 0, "Log level between -1 and 5, where -1 is Debug and 5 is Fatal")
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
@@ -51,6 +54,10 @@ func init() {
 	atom.SetLevel(
 		zapcore.Level(viper.GetInt("log-level")),
 	)
+
+	viper.SetDefault("ADDR", ":8000")
+	addr = viper.GetString("addr")
+
 }
 
 func main() {
@@ -66,9 +73,9 @@ func main() {
 
 	srv := &http.Server{
 		Handler: mux,
-		Addr:    ":8000",
+		Addr:    addr,
 	}
 
-	log.Info("Starting HTTP Server")
+	log.Info("Starting HTTP Server", zap.String("addr", addr))
 	log.Fatal("Failed to serve", zap.Error(srv.ListenAndServe()))
 }
