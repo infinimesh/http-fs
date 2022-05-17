@@ -32,6 +32,7 @@ import (
 var (
 	log  *zap.Logger
 	addr string
+	repo string
 )
 
 func init() {
@@ -58,6 +59,8 @@ func init() {
 	viper.SetDefault("ADDR", ":8000")
 	addr = viper.GetString("addr")
 
+	viper.SetDefault("REPO", "repo:8000")
+	repo = viper.GetString("repo")
 }
 
 func main() {
@@ -69,7 +72,8 @@ func main() {
 	mux := router.NewRouter(handler)
 
 	// Uncomment this line and comment the next one to enable the ReadOnlyMiddleware
-	mux.Use(mw.ReadOnlyMiddleware)
+	// mux.Use(mw.ReadOnlyMiddleware)
+	mux.Use(mw.InfinimeshMiddleware(log.Named("middleware"), repo))
 
 	srv := &http.Server{
 		Handler: mux,
