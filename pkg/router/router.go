@@ -34,6 +34,7 @@ func NewRouter(h io.IOHandler) *mux.Router {
 	r := mux.NewRouter()
 	
 	r.HandleFunc("/{ns}", Stat(h)).Methods("GET")
+	r.HandleFunc("/{ns}/{file}", Fetch(h)).Methods("GET")
 
 	return r
 }
@@ -41,7 +42,34 @@ func NewRouter(h io.IOHandler) *mux.Router {
 func Stat(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ns := mux.Vars(r)["ns"]
-		h.Stat(ns)
+		files, err := h.Stat(ns)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		json.NewEncoder(w).Encode(files)
+	}
+}
+
+func Fetch(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ns := mux.Vars(r)["ns"]
+		file := mux.Vars(r)["file"]
+		f, mime, err := h.Fetch(ns, file)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		if mime == nil {
+			m := mimetype.Detect(f).String()
+			mime = &m
+		}
+		w.Header().Set("Content-Type", *mime)
+		w.Write(f)
+	}
+}
 
 		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 	}

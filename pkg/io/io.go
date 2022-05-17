@@ -17,5 +17,11 @@ package io
 
 type IOHandler interface {
 	// returns stats (files and their props) in current namespace(dir)
-	Stat(ns string)
+	Stat(ns string) ([]File, error)
+	// returns file itself and optionally mime type
+	Fetch(ns, file string) (bytes []byte, mime *string, err error)
+	// writes file
+type File struct {
+	Name string `json:"name"`
+	Size int64   `json:"size"`
 }
