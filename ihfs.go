@@ -55,6 +55,7 @@ func init() {
 func main() {
     defer log.Sync()
     log.Info("Starting infinimesh HTTP FileServer")
+    log.Debug("Debug mode enabled")
 
     handler := fs.NewFileSystemHandler(log, "static")
     mux := router.NewRouter(handler)

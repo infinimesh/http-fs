@@ -21,6 +21,9 @@ type IOHandler interface {
 	// returns file itself and optionally mime type
 	Fetch(ns, file string) (bytes []byte, mime *string, err error)
 	// writes file
+	Upload(ns, file string, bytes []byte) error
+}
+
 type File struct {
 	Name string `json:"name"`
 	Size int64   `json:"size"`

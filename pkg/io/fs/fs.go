@@ -80,3 +80,15 @@ func (f *FSHandler) Fetch(ns, file string) ([]byte, *string, error) {
 	return bytes, nil, nil
 }
 
+func (f *FSHandler) Upload(ns, file string, data []byte) error {
+	log := f.log.Named("Upload")
+
+	p := path.Join(f.root, ns, file)
+
+	err := os.WriteFile(p, data, 0644)
+	if err != nil {
+		log.Error("failed to write file", zap.Error(err))
+		return err
+	}
+	return nil
+}

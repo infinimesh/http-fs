@@ -17,6 +17,7 @@ package router
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -36,6 +37,7 @@ func NewRouter(h io.IOHandler) *mux.Router {
 	
 	r.HandleFunc("/{ns}", Stat(h)).Methods("GET")
 	r.HandleFunc("/{ns}/{file}", Fetch(h)).Methods("GET")
+	r.HandleFunc("/{ns}/{file}", Upload(h)).Methods("POST")
 
 	r.Use(mux.CORSMethodMiddleware(r))
 
@@ -74,6 +76,32 @@ func Fetch(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	}
 }
 
-		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+func Upload(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ns := mux.Vars(r)["ns"]
+		filename := mux.Vars(r)["file"]
+		
+		file, _, err := r.FormFile("file")
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Bad Request: File must be present as form under key 'file'"))
+			return
+		}
+		defer file.Close()
+
+		bytes, err := ioutil.ReadAll(file)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Internal Server Error: Failed to read file"))
+			return
+		}
+
+		err = h.Upload(ns, filename, bytes)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
 	}
 }
