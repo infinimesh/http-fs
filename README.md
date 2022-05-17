@@ -21,6 +21,8 @@ GET /{ns}/{file} - returns file itself
 POST /{ns}/{file} - uploads file
 DELETE /{ns}/{file} - deletes file
 
+See the Postman Collection to try it yourself.
+
 ## Installation
 
 Docker(compose) service example:
@@ -54,6 +56,8 @@ These is the result of using [InfinimeshMiddleware](https://github.com/infinimes
 Middleware is a `mux` middleware which adds `Access` to context.
 
 Access defined [here](https://github.com/infinimesh/http-fs/blob/2052af2e6f9ffa67bcb0c2cdbf1ac9f54e550bfd/pkg/mw/mw.go). It's a simple structure which defined if requestor has Read and Write access to the namespace/file.
+
+You can also see the [SampleMiddleware](https://github.com/infinimesh/http-fs/blob/master/pkg/mw/sample.go) to (maybe) get a better idea.
 
 ### IOHandler
 
