@@ -26,9 +26,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
-	pb "github.com/infinimesh/infinimesh/pkg/node/proto"
-	accpb "github.com/infinimesh/infinimesh/pkg/node/proto/access"
-	nspb "github.com/infinimesh/infinimesh/pkg/node/proto/namespaces"
+	pb "github.com/infinimesh/proto/node"
+	accpb "github.com/infinimesh/proto/node/access"
+	nspb "github.com/infinimesh/proto/node/namespaces"
 )
 
 func InfinimeshMiddleware(logger *zap.Logger, host string) func(next http.Handler) http.Handler {
@@ -97,12 +97,12 @@ func InfinimeshMiddleware(logger *zap.Logger, host string) func(next http.Handle
 				return
 			}
 
-			if ns.Access.Level < accpb.AccessLevel_READ {
+			if ns.Access.Level < accpb.Level_READ {
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
 			acc.Read = true
-			if ns.Access.Level >= accpb.AccessLevel_ADMIN {
+			if ns.Access.Level >= accpb.Level_ADMIN {
 				acc.Write = true
 			}
 

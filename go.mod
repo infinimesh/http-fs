@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/gorilla/mux v1.8.0
+	github.com/infinimesh/proto v0.0.0-20220517220014-9da35b014803
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.11.0
 	go.uber.org/zap v1.21.0
@@ -14,9 +15,8 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.3 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/infinimesh/infinimesh v0.0.0-20220507135648-db08bec40467 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
