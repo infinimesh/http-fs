@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/gorilla/mux"
 	"github.com/infinimesh/http-fs/pkg/io"
 )
@@ -35,6 +36,8 @@ func NewRouter(h io.IOHandler) *mux.Router {
 	
 	r.HandleFunc("/{ns}", Stat(h)).Methods("GET")
 	r.HandleFunc("/{ns}/{file}", Fetch(h)).Methods("GET")
+
+	r.Use(mux.CORSMethodMiddleware(r))
 
 	return r
 }
