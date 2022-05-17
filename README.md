@@ -1,5 +1,7 @@
 # infinimesh HTTP FileServer
 
+[![Build Docker Images](https://github.com/infinimesh/http-fs/actions/workflows/ci.yml/badge.svg)](https://github.com/infinimesh/http-fs/actions/workflows/ci.yml)
+
 Simple HTTP FileServer made for infimesh, but can be extended and applied for other services with simillar purposes.
 
 Right now only FileSystem storage is supported.
