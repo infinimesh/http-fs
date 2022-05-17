@@ -16,9 +16,10 @@ limitations under the License.
 package mw
 
 type MiddlewareContextKey string
+
 const AccessKey = MiddlewareContextKey("access")
 
 type Access struct {
-	Read bool
+	Read  bool
 	Write bool
 }

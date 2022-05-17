@@ -35,7 +35,7 @@ import (
 // 	DELETE /{ns}/{file} - deletes file
 func NewRouter(h io.IOHandler) *mux.Router {
 	r := mux.NewRouter()
-	
+
 	r.HandleFunc("/{ns}", Stat(h)).Methods("GET")
 	r.HandleFunc("/{ns}", Delete(h)).Methods("DELETE")
 
@@ -62,7 +62,7 @@ func Access(r *http.Request) (read, write bool) {
 	return access.Read, access.Write
 }
 
-func Stat(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
+func Stat(h io.IOHandler) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		read, _ := Access(r)
 		if !read {
@@ -81,7 +81,7 @@ func Stat(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	}
 }
 
-func Fetch(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
+func Fetch(h io.IOHandler) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		read, _ := Access(r)
 		if !read {
@@ -106,7 +106,7 @@ func Fetch(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	}
 }
 
-func Upload(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
+func Upload(h io.IOHandler) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, write := Access(r)
 		if !write {
@@ -116,7 +116,7 @@ func Upload(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 
 		ns := mux.Vars(r)["ns"]
 		filename := mux.Vars(r)["file"]
-		
+
 		file, _, err := r.FormFile("file")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -142,14 +142,14 @@ func Upload(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	}
 }
 
-func Delete(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
+func Delete(h io.IOHandler) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, write := Access(r)
 		if !write {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
-		
+
 		ns := mux.Vars(r)["ns"]
 		file, ok := mux.Vars(r)["file"]
 

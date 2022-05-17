@@ -25,13 +25,13 @@ import (
 )
 
 type FSHandler struct {
-	log *zap.Logger
+	log  *zap.Logger
 	root string
 }
 
-func NewFileSystemHandler(log *zap.Logger, root string) (*FSHandler) {
+func NewFileSystemHandler(log *zap.Logger, root string) *FSHandler {
 	return &FSHandler{
-		log: log.Named("fs"),
+		log:  log.Named("fs"),
 		root: root,
 	}
 }
@@ -40,7 +40,7 @@ func (f *FSHandler) Stat(ns string) ([]io.File, error) {
 	log := f.log.Named("Stat")
 
 	p := path.Join(f.root, ns)
-	begin:
+begin:
 	files, err := ioutil.ReadDir(p)
 	if os.IsNotExist(err) {
 		log.Warn("Namespace does not exist", zap.String("ns", ns))
@@ -85,7 +85,7 @@ func (f *FSHandler) Upload(ns, file string, data []byte) error {
 
 	p := path.Join(f.root, ns, file)
 
-	begin:
+begin:
 	err := os.WriteFile(p, data, 0644)
 	if os.IsNotExist(err) {
 		log.Warn("Namespace does not exist", zap.String("ns", ns))

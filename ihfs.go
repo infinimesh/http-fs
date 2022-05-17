@@ -30,7 +30,7 @@ import (
 )
 
 var (
-    log *zap.Logger
+	log *zap.Logger
 )
 
 func init() {
@@ -42,33 +42,33 @@ func init() {
 		zapcore.Lock(os.Stdout),
 		atom,
 	))
-		
+
 	flag.Int("log-level", 0, "Log level between -1 and 5, where -1 is Debug and 5 is Fatal")
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
-    atom.SetLevel(
+	atom.SetLevel(
 		zapcore.Level(viper.GetInt("log-level")),
 	)
 }
 
 func main() {
-    defer log.Sync()
-    log.Info("Starting infinimesh HTTP FileServer")
-    log.Debug("Debug mode enabled")
+	defer log.Sync()
+	log.Info("Starting infinimesh HTTP FileServer")
+	log.Debug("Debug mode enabled")
 
-    handler := fs.NewFileSystemHandler(log, "static")
-    mux := router.NewRouter(handler)
+	handler := fs.NewFileSystemHandler(log, "static")
+	mux := router.NewRouter(handler)
 
-    // Uncomment this line and comment the next one to enable the ReadOnlyMiddleware
-    mux.Use(mw.ReadOnlyMiddleware)
+	// Uncomment this line and comment the next one to enable the ReadOnlyMiddleware
+	mux.Use(mw.ReadOnlyMiddleware)
 
-    srv := &http.Server{
-        Handler: mux,
-        Addr:    ":8000",
-    }
+	srv := &http.Server{
+		Handler: mux,
+		Addr:    ":8000",
+	}
 
-    log.Info("Starting HTTP Server")
-    log.Fatal("Failed to serve", zap.Error(srv.ListenAndServe()))
+	log.Info("Starting HTTP Server")
+	log.Fatal("Failed to serve", zap.Error(srv.ListenAndServe()))
 }
