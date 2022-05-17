@@ -43,7 +43,7 @@ func (f *FSHandler) Stat(ns string) ([]io.File, error) {
 	begin:
 	files, err := ioutil.ReadDir(p)
 	if os.IsNotExist(err) {
-		log.Error("Namespace does not exist", zap.String("ns", ns))
+		log.Warn("Namespace does not exist", zap.String("ns", ns))
 		err = os.Mkdir(p, 0755)
 		if err != nil {
 			panic(err)
@@ -88,7 +88,7 @@ func (f *FSHandler) Upload(ns, file string, data []byte) error {
 	begin:
 	err := os.WriteFile(p, data, 0644)
 	if os.IsNotExist(err) {
-		log.Error("Namespace does not exist", zap.String("ns", ns))
+		log.Warn("Namespace does not exist", zap.String("ns", ns))
 		err = os.Mkdir(path.Join(f.root, ns), 0755)
 		if err != nil {
 			panic(err)
