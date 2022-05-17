@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/infinimesh/http-fs/pkg/io/fs"
+	"github.com/infinimesh/http-fs/pkg/mw"
 	"github.com/infinimesh/http-fs/pkg/router"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -59,6 +60,9 @@ func main() {
 
     handler := fs.NewFileSystemHandler(log, "static")
     mux := router.NewRouter(handler)
+
+    // Uncomment this line and comment the next one to enable the ReadOnlyMiddleware
+    mux.Use(mw.ReadOnlyMiddleware)
 
     srv := &http.Server{
         Handler: mux,

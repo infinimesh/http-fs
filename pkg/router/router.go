@@ -23,6 +23,7 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gorilla/mux"
 	"github.com/infinimesh/http-fs/pkg/io"
+	"github.com/infinimesh/http-fs/pkg/mw"
 )
 
 // Creates new mux Router with default routes settings
@@ -47,8 +48,28 @@ func NewRouter(h io.IOHandler) *mux.Router {
 	return r
 }
 
+func Access(r *http.Request) (read, write bool) {
+	v := r.Context().Value(mw.AccessKey)
+	if v == nil {
+		return false, false
+	}
+
+	access, ok := v.(mw.Access)
+	if !ok {
+		return false, false
+	}
+
+	return access.Read, access.Write
+}
+
 func Stat(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		read, _ := Access(r)
+		if !read {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
 		ns := mux.Vars(r)["ns"]
 		files, err := h.Stat(ns)
 		if err != nil {
@@ -62,6 +83,12 @@ func Stat(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 
 func Fetch(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		read, _ := Access(r)
+		if !read {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
 		ns := mux.Vars(r)["ns"]
 		file := mux.Vars(r)["file"]
 		f, mime, err := h.Fetch(ns, file)
@@ -81,6 +108,12 @@ func Fetch(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 
 func Upload(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		_, write := Access(r)
+		if !write {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
 		ns := mux.Vars(r)["ns"]
 		filename := mux.Vars(r)["file"]
 		
@@ -111,6 +144,12 @@ func Upload(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 
 func Delete(h io.IOHandler) (func(http.ResponseWriter, *http.Request)) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		_, write := Access(r)
+		if !write {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+		
 		ns := mux.Vars(r)["ns"]
 		file, ok := mux.Vars(r)["file"]
 
