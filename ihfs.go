@@ -68,7 +68,9 @@ func main() {
 	log.Info("Starting infinimesh HTTP FileServer")
 	log.Debug("Debug mode enabled")
 
-	handler := fs.NewFileSystemHandler(log, "static")
+	viper.SetDefault("STATIC_DIR", "static")
+	static := viper.GetString("STATIC_DIR")
+	handler := fs.NewFileSystemHandler(log, static)
 	mux := router.NewRouter(handler)
 
 	// Uncomment this line and comment the next one to enable the ReadOnlyMiddleware
