@@ -30,6 +30,7 @@ type IOHandler interface {
 }
 
 type File struct {
-	Name string `json:"name"`
-	Size int64  `json:"size"`
+	Name    string `json:"name"`
+	Size    int64  `json:"size"`
+	ModTime int64  `json:"mod_time"`
 }
