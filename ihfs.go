@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/infinimesh/http-fs/pkg/io/fs"
 	"github.com/infinimesh/http-fs/pkg/mw"
 	"github.com/infinimesh/http-fs/pkg/router"
@@ -71,8 +72,14 @@ func main() {
 	// mux.Use(mw.ReadOnlyMiddleware)
 	mux.Use(mw.InfinimeshMiddleware(log.Named("middleware"), repo))
 
+	http_handler := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "OPTIONS", "HEAD"}),
+	)(mux)
+
 	srv := &http.Server{
-		Handler: mux,
+		Handler: http_handler,
 		Addr:    addr,
 	}
 
