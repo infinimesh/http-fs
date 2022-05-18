@@ -16,14 +16,12 @@ limitations under the License.
 package main
 
 import (
-	"flag"
 	"net/http"
 	"os"
 
 	"github.com/infinimesh/http-fs/pkg/io/fs"
 	"github.com/infinimesh/http-fs/pkg/mw"
 	"github.com/infinimesh/http-fs/pkg/router"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -47,13 +45,9 @@ func init() {
 
 	viper.AutomaticEnv()
 
-	flag.Int("log-level", 0, "Log level between -1 and 5, where -1 is Debug and 5 is Fatal")
-	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-	pflag.Parse()
-	viper.BindPFlags(pflag.CommandLine)
-
+	viper.SetDefault("LOG_LEVEL", 0)
 	atom.SetLevel(
-		zapcore.Level(viper.GetInt("log-level")),
+		zapcore.Level(viper.GetInt("LOG_LEVEL")),
 	)
 
 	viper.SetDefault("ADDR", ":8000")
