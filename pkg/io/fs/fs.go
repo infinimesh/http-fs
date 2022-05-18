@@ -25,8 +25,9 @@ import (
 )
 
 type FSHandler struct {
-	log  *zap.Logger
-	root string
+	log   *zap.Logger
+	root  string
+	limit int
 }
 
 func NewFileSystemHandler(log *zap.Logger, root string) *FSHandler {
@@ -36,7 +37,11 @@ func NewFileSystemHandler(log *zap.Logger, root string) *FSHandler {
 	}
 }
 
-func (f *FSHandler) Stat(ns string) ([]io.File, error) {
+func (f *FSHandler) SetLimit(limit int) {
+	f.limit = limit
+}
+
+func (f *FSHandler) Stat(ns string) (r io.Stats, err error) {
 	log := f.log.Named("Stat")
 
 	p := path.Join(f.root, ns)
@@ -52,7 +57,7 @@ begin:
 	}
 	if err != nil {
 		log.Error("failed to read directory", zap.Error(err))
-		return nil, err
+		return r, err
 	}
 
 	content := make([]io.File, 0)
@@ -63,7 +68,10 @@ begin:
 		content = append(content, io.File{Name: f.Name(), Size: f.Size(), ModTime: f.ModTime().UnixMilli()})
 	}
 
-	return content, nil
+	return io.Stats{
+		Files:     content,
+		FileLimit: f.limit,
+	}, nil
 }
 
 func (f *FSHandler) Fetch(ns, file string) ([]byte, *string, error) {
@@ -85,8 +93,14 @@ func (f *FSHandler) Upload(ns, file string, data []byte) error {
 
 	p := path.Join(f.root, ns, file)
 
+	log.Info("Writing file", zap.String("path", p), zap.String("ns", ns), zap.String("file", file), zap.Int("size", (len(data))))
+	if f.limit < len(data) {
+		return io.FileTooLargeError{
+			Limit: f.limit,
+			Size:  len(data),
+		}
+	}
 begin:
-	log.Debug("writing file", zap.String("path", p), zap.String("ns", ns), zap.String("file", file))
 	err := os.WriteFile(p, data, 0644)
 	if os.IsNotExist(err) {
 		log.Warn("Namespace does not exist", zap.String("ns", ns))

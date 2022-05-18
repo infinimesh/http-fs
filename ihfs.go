@@ -29,9 +29,10 @@ import (
 )
 
 var (
-	log  *zap.Logger
-	addr string
-	repo string
+	log   *zap.Logger
+	addr  string
+	repo  string
+	limit int
 )
 
 func init() {
@@ -56,6 +57,9 @@ func init() {
 
 	viper.SetDefault("REPO", "repo:8000")
 	repo = viper.GetString("repo")
+
+	viper.SetDefault("UPLOAD_LIMIT", 10485760)
+	limit = viper.GetInt("UPLOAD_LIMIT")
 }
 
 func main() {
@@ -66,6 +70,7 @@ func main() {
 	viper.SetDefault("STATIC_DIR", "static")
 	static := viper.GetString("STATIC_DIR")
 	handler := fs.NewFileSystemHandler(log, static)
+	handler.SetLimit(limit)
 	mux := router.NewRouter(handler)
 
 	// Uncomment this line and comment the next one to enable the ReadOnlyMiddleware

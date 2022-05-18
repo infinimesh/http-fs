@@ -140,6 +140,10 @@ func Upload(h io.IOHandler) func(http.ResponseWriter, *http.Request) {
 
 		err = h.Upload(ns, filename, bytes)
 		if err != nil {
+			if err, ok := err.(*io.FileTooLargeError); ok {
+				w.WriteHeader(http.StatusForbidden)
+				w.Write([]byte(err.Error()))
+			}
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

@@ -15,9 +15,11 @@ limitations under the License.
 */
 package io
 
+import "fmt"
+
 type IOHandler interface {
 	// returns stats (files and their props) in current namespace(dir)
-	Stat(ns string) ([]File, error)
+	Stat(ns string) (Stats, error)
 	// returns file itself and optionally mime type
 	Fetch(ns, file string) (bytes []byte, mime *string, err error)
 	// writes file
@@ -27,10 +29,27 @@ type IOHandler interface {
 	Delete(ns, file string) error
 	// deletes namespace(dir)
 	DeleteNS(ns string) error
+
+	// Sets upload limit in bytes
+	SetLimit(limit int)
 }
 
 type File struct {
 	Name    string `json:"name"`
 	Size    int64  `json:"size"`
 	ModTime int64  `json:"mod_time"`
+}
+
+type Stats struct {
+	Files     []File `json:"files"`
+	FileLimit int    `json:"file_limit"`
+}
+
+type FileTooLargeError struct {
+	Limit int
+	Size  int
+}
+
+func (e FileTooLargeError) Error() string {
+	return fmt.Sprintf("File too large: %d bytes, limit is: %d", e.Size, e.Limit)
 }

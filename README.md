@@ -37,6 +37,7 @@ Docker(compose) service example:
             ADDR: :8000
             REPO: repo:8000
             STATIC_DIR: /static # you should probably map this to some real volume
+            UPLOAD_LIMIT: 10485760 # 10MB
             LOG_LEVEL: -1 # -1 for debug, 0 for info, 1 for warning, 2 for error (defaults to info)
 ```
 
