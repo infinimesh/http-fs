@@ -95,7 +95,7 @@ func (f *FSHandler) Upload(ns, file string, data []byte) error {
 
 	log.Info("Writing file", zap.String("path", p), zap.String("ns", ns), zap.String("file", file), zap.Int("size", (len(data))))
 	if f.limit < len(data) {
-		return io.FileTooLargeError{
+		return &io.FileTooLargeError{
 			Limit: f.limit,
 			Size:  len(data),
 		}
