@@ -60,7 +60,7 @@ begin:
 		if f.IsDir() {
 			continue
 		}
-		content = append(content, io.File{Name: f.Name(), Size: f.Size(), ModTime: f.ModTime().Unix()})
+		content = append(content, io.File{Name: f.Name(), Size: f.Size(), ModTime: f.ModTime().UnixMilli()})
 	}
 
 	return content, nil
