@@ -117,6 +117,12 @@ func Upload(h io.IOHandler) func(http.ResponseWriter, *http.Request) {
 		ns := mux.Vars(r)["ns"]
 		filename := mux.Vars(r)["file"]
 
+		if ns == "" || filename == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Bad Request: Namespace and Filename are required"))
+			return
+		}
+
 		file, _, err := r.FormFile("file")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
