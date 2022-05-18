@@ -86,6 +86,7 @@ func (f *FSHandler) Upload(ns, file string, data []byte) error {
 	p := path.Join(f.root, ns, file)
 
 begin:
+	log.Debug("writing file", zap.String("path", p), zap.String("ns", ns), zap.String("file", file))
 	err := os.WriteFile(p, data, 0644)
 	if os.IsNotExist(err) {
 		log.Warn("Namespace does not exist", zap.String("ns", ns))

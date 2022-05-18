@@ -52,6 +52,7 @@ func InfinimeshMiddleware(logger *zap.Logger, host string) func(next http.Handle
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			bearer := r.Header.Get("Authorization")
 			vars := mux.Vars(r)
+
 			log.Debug("Request", zap.Any("vars", vars), zap.Bool("unauthorized", bearer == ""))
 
 			ctx := r.Context()
@@ -106,7 +107,7 @@ func InfinimeshMiddleware(logger *zap.Logger, host string) func(next http.Handle
 				acc.Write = true
 			}
 
-			ctx = context.WithValue(ctx, AccessKey, acc)
+			ctx = context.WithValue(r.Context(), AccessKey, acc)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
